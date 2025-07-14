@@ -18,24 +18,18 @@ impl BluetoothAgent {
 
     async fn display_pin_code(&self, device: ObjectPath<'_>, pincode: &str) {
         let mac = Self::extract_mac_from_path(&device);
-        print!("\x1b[2K\rPIN: {} for device, {}\n\x1b[s", pincode, mac);
-        println!("\nWaiting for pairing requests... Press Ctrl+C to exit");
-        print!("\x1b[u");
+        println!("PIN: {} for device, {}", pincode, mac);
     }
 
     async fn request_confirmation(&self, device: ObjectPath<'_>, passkey: u32) -> fdo::Result<()> {
         let mac = Self::extract_mac_from_path(&device);
-        print!("\x1b[2K\rPairing code: {} for device, {}\n\x1b[s", passkey, mac);
-        println!("\nWaiting for pairing requests... Press Ctrl+C to exit");
-        print!("\x1b[u");
+        println!("Pairing code: {} for device, {}", passkey, mac);
         Ok(())
     }
 
     async fn request_authorization(&self, device: ObjectPath<'_>) -> fdo::Result<()> {
         let mac = Self::extract_mac_from_path(&device);
-        print!("\x1b[2K\rAuthorizing device: {}\n\x1b[s", mac);
-        println!("\nWaiting for pairing requests... Press Ctrl+C to exit");
-        print!("\x1b[u");
+        println!("Authorizing device: {}", mac);
         Ok(())
     }
 
@@ -126,6 +120,18 @@ impl<'a> BluetoothManager<'a> {
             agent_proxy.call_method("RequestDefaultAgent", &(ObjectPath::try_from(agent_path)?,)).await?;
             println!("Agent registered successfully");
         }
+        Ok(())
+    }
+
+    pub async fn shutdown(&mut self, _conn: &Connection) -> zbus::Result<()> {
+        if let Some(agent_proxy) = &self.agent_manager_proxy {
+            let agent_path = "/org/bluez/agent";
+            let _ = agent_proxy.call_method("UnregisterAgent", &(ObjectPath::try_from(agent_path)?,)).await;
+        }
+        
+        self.set_discoverable(false).await?;
+        self.set_pairable(false).await?;
+        self.set_powered(false).await?;
         Ok(())
     }
 }

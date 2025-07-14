@@ -2,6 +2,7 @@ mod bluetooth_manager;
 
 use bluetooth_manager::BluetoothManager;
 use zbus::Connection;
+use tokio::signal;
 
 #[tokio::main]
 async fn main() -> zbus::Result<()> {
@@ -10,14 +11,14 @@ async fn main() -> zbus::Result<()> {
 
     adapter.enable_discoverable(String::from("tethyr-device")).await?;
     adapter.register_agent(&conn).await?;
-    
     println!("Bluetooth adapter is now discoverable as {}", adapter.name);
-    println!();
     
-    print!("\x1b[s");
-    println!("Waiting for pairing requests... Press Ctrl+C to exit");
-    print!("\x1b[u");
+    println!("\nTethyr Running... Press Ctrl+C to exit\n");
+    println!("Pairing requests will appear below:");
 
-    std::future::pending::<()>().await;
+    signal::ctrl_c().await.expect("Shutting down...");
+    println!("Shutting down gracefully...");
+    
+    adapter.shutdown(&conn).await?;
     Ok(())
 }
