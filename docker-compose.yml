@@ -1,0 +1,32 @@
+services:
+  dev-personal:
+    build:
+      context: .
+      dockerfile: environment/dev-personal/Dockerfile
+    container_name: dev-environment-personal
+    volumes:
+      - .:/home/workspace
+    working_dir: /home/workspace
+    stdin_open: true
+    tty: true
+    command: tail -f /dev/null
+    environment:
+      - SHELL=/bin/bash
+  dev:
+    build:
+      context: .
+      dockerfile: environment/base/Dockerfile
+    container_name: dev-environment
+    volumes:
+      - .:/home/workspace
+    working_dir: /home/workspace
+    stdin_open: true
+    tty: true
+  prod:
+    build:
+      context: .
+      dockerfile: environment/base/Dockerfile
+    container_name: prod
+    volumes:
+      - .:/home/workspace
+    #command: python3 myapp.py
