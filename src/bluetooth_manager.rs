@@ -18,18 +18,24 @@ impl BluetoothAgent {
 
     async fn display_pin_code(&self, device: ObjectPath<'_>, pincode: &str) {
         let mac = Self::extract_mac_from_path(&device);
-        println!("PIN: {} for device, {}", pincode, mac);
+        print!("\x1b[2K\rPIN: {} for device, {}\n\x1b[s", pincode, mac);
+        println!("\nWaiting for pairing requests... Press Ctrl+C to exit");
+        print!("\x1b[u");
     }
 
     async fn request_confirmation(&self, device: ObjectPath<'_>, passkey: u32) -> fdo::Result<()> {
         let mac = Self::extract_mac_from_path(&device);
-        println!("Pairing code: {} for device, {}", passkey, mac);
+        print!("\x1b[2K\rPairing code: {} for device, {}\n\x1b[s", passkey, mac);
+        println!("\nWaiting for pairing requests... Press Ctrl+C to exit");
+        print!("\x1b[u");
         Ok(())
     }
 
     async fn request_authorization(&self, device: ObjectPath<'_>) -> fdo::Result<()> {
         let mac = Self::extract_mac_from_path(&device);
-        println!("Authorizing device: {}", mac);
+        print!("\x1b[2K\rAuthorizing device: {}\n\x1b[s", mac);
+        println!("\nWaiting for pairing requests... Press Ctrl+C to exit");
+        print!("\x1b[u");
         Ok(())
     }
 

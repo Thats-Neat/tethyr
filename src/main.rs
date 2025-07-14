@@ -12,7 +12,11 @@ async fn main() -> zbus::Result<()> {
     adapter.register_agent(&conn).await?;
     
     println!("Bluetooth adapter is now discoverable as {}", adapter.name);
+    println!();
+    
+    print!("\x1b[s");
     println!("Waiting for pairing requests... Press Ctrl+C to exit");
+    print!("\x1b[u");
 
     std::future::pending::<()>().await;
     Ok(())
