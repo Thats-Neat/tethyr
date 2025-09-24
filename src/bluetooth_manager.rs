@@ -1,5 +1,5 @@
-use zbus::{Connection, Proxy, fdo};
 use zbus::zvariant::ObjectPath;
+use zbus::{Connection, Proxy, fdo};
 
 pub struct BluetoothManager<'a> {
     proxy: Proxy<'a>,
@@ -59,7 +59,10 @@ pub struct BluetoothPANServer;
 #[zbus::dbus_interface(name = "org.bluez.NetworkServer1")]
 impl BluetoothPANServer {
     async fn register(&self, uuid: &str, bridge: &str) -> fdo::Result<()> {
-        println!("PAN Server registered with UUID: {} on bridge: {}", uuid, bridge);
+        println!(
+            "PAN Server registered with UUID: {} on bridge: {}",
+            uuid, bridge
+        );
         Ok(())
     }
 
@@ -125,7 +128,9 @@ impl<'a> BluetoothManager<'a> {
     }
 
     pub async fn set_discoverable(&mut self, discoverable: bool) -> zbus::Result<()> {
-        self.proxy.set_property("Discoverable", &discoverable).await?;
+        self.proxy
+            .set_property("Discoverable", &discoverable)
+            .await?;
         self.discoverable = discoverable;
         Ok(())
     }
@@ -146,9 +151,17 @@ impl<'a> BluetoothManager<'a> {
         if let Some(agent_proxy) = &self.agent_manager_proxy {
             let agent_path = "/org/bluez/agent";
             conn.object_server().at(agent_path, BluetoothAgent).await?;
-            
-            agent_proxy.call_method("RegisterAgent", &(ObjectPath::try_from(agent_path)?, "DisplayYesNo")).await?;
-            agent_proxy.call_method("RequestDefaultAgent", &(ObjectPath::try_from(agent_path)?,)).await?;
+
+            agent_proxy
+                .call_method(
+                    "RegisterAgent",
+                    &(ObjectPath::try_from(agent_path)?, "DisplayYesNo"),
+                )
+                .await?;
+
+            agent_proxy
+                .call_method("RequestDefaultAgent", &(ObjectPath::try_from(agent_path)?,))
+                .await?;
             println!("Agent registered successfully");
         }
         Ok(())
@@ -157,10 +170,14 @@ impl<'a> BluetoothManager<'a> {
     pub async fn register_pan_server(&self, conn: &Connection, bridge: &str) -> zbus::Result<()> {
         if let Some(pan_proxy) = &self.pan_server_proxy {
             let pan_path = "/org/bluez/pan_server";
-            conn.object_server().at(pan_path, BluetoothPANServer).await?;
-            
+            conn.object_server()
+                .at(pan_path, BluetoothPANServer)
+                .await?;
+
             let nap_uuid = "00001116-0000-1000-8000-00805f9b34fb";
-            pan_proxy.call_method("Register", &(nap_uuid, bridge)).await?;
+            pan_proxy
+                .call_method("Register", &(nap_uuid, bridge))
+                .await?;
             println!("PAN Server registered with bridge: {}", bridge);
         }
         Ok(())
@@ -178,9 +195,11 @@ impl<'a> BluetoothManager<'a> {
     pub async fn shutdown(&mut self, _conn: &Connection) -> zbus::Result<()> {
         if let Some(agent_proxy) = &self.agent_manager_proxy {
             let agent_path = "/org/bluez/agent";
-            let _ = agent_proxy.call_method("UnregisterAgent", &(ObjectPath::try_from(agent_path)?,)).await;
+            let _ = agent_proxy
+                .call_method("UnregisterAgent", &(ObjectPath::try_from(agent_path)?,))
+                .await;
         }
-        
+
         self.unregister_pan_server().await?;
         self.set_discoverable(false).await?;
         self.set_pairable(false).await?;
