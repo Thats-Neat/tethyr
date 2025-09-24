@@ -17,11 +17,6 @@ pub struct BluetoothAgent;
 impl BluetoothAgent {
     async fn release(&self) {}
 
-    async fn display_pin_code(&self, device: ObjectPath<'_>, pincode: &str) {
-        let mac = Self::extract_mac_from_path(&device);
-        println!("PIN: {} for device, {}", pincode, mac);
-    }
-
     async fn request_confirmation(&self, device: ObjectPath<'_>, passkey: u32) -> fdo::Result<()> {
         let mac = Self::extract_mac_from_path(&device);
         println!("Pairing code: {} for device, {}", passkey, mac);
@@ -31,12 +26,6 @@ impl BluetoothAgent {
     async fn request_authorization(&self, device: ObjectPath<'_>) -> fdo::Result<()> {
         let mac = Self::extract_mac_from_path(&device);
         println!("Authorizing device: {}", mac);
-        Ok(())
-    }
-
-    async fn authorize_service(&self, device: ObjectPath<'_>, uuid: &str) -> fdo::Result<()> {
-        let mac = Self::extract_mac_from_path(&device);
-        println!("Authorizing service {} for device: {}", uuid, mac);
         Ok(())
     }
 
