@@ -23,9 +23,9 @@ impl BluetoothAgent {
         Ok(())
     }
 
-    async fn request_authorization(&self, device: ObjectPath<'_>) -> fdo::Result<()> {
+    async fn authorize_service(&self, device: ObjectPath<'_>, uuid: &str) -> fdo::Result<()> {
         let mac = Self::extract_mac_from_path(&device);
-        println!("Authorizing device: {}", mac);
+        println!("Authorizing service {} for device: {}", uuid, mac);
         Ok(())
     }
 
