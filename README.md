@@ -12,7 +12,7 @@
 </div>
 <br/>
 
-A modern and dead simple way to connect your Raspberry Pi to a mobile device. With bluetooth tethering you can create a PAN (Personal Area Network) allowing your mobile device to access websites or services locally hosted on the PI without cables or a router.
+A modern and dead simple way to connect your Raspberry Pi to a mobile device. With bluetooth tethering you can create a PAN (Personal Area Network) allowing your mobile device to access websites or services locally hosted on the Pi without cables or a router.
 
 ## Features
 - Simple bluetooth communication using the D-Bus, achieved with the [zbus](https://docs.rs/zbus/latest/zbus/) Rust crate
