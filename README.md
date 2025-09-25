@@ -33,3 +33,5 @@ A modern and dead simple way to connect your Raspberry Pi to a mobile device. Wi
 ```
 3. Connect your mobile device to the `tethyr-device` bluetooth device
 4. Ensure the code displayed corresponds to the code presented on the Raspberry Pi
+5. Set a manual ip on your mobile device to the same subnet as the Pi (ex. 192.168.7.10) with a subnet mask of 255.255.255.0
+    - In the default `setup_pan.sh` file the Pi is setup as 192.168.7.1, this is the IP you will use to access hosted websites or services
